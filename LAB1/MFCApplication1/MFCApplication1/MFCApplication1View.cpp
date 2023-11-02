@@ -71,16 +71,14 @@ void CMFCApplication1View::DrawBackground(CDC* pDC) {
 }
 
 void CMFCApplication1View::DrawGrid(CDC* pDC) {
-	int NUMBER_OF_SQUARES = 20;
-	int WIDTH_OF_SQUARE_IN_PIXELS = 500 / 20;
-	int NUMBER_OF_LINES = NUMBER_OF_SQUARES - 1;
+	int NUMBER_OF_LINES = 19;
 
 	CPen gridPen(PS_SOLID, 1, RGB(240, 240, 240));
 	CPen* oldPen = pDC->SelectObject(&gridPen);
 
 
 	for (int COLUMN = 0; COLUMN < NUMBER_OF_LINES; COLUMN++) {
-		int x1 = (COLUMN + 1) * WIDTH_OF_SQUARE_IN_PIXELS;
+		int x1 = (COLUMN + 1) * BLOCK_WIDTH;
 		int y1 = 1;
 		int x2 = x1;
 		int y2 = 499;
@@ -90,7 +88,7 @@ void CMFCApplication1View::DrawGrid(CDC* pDC) {
 	}
 
 	for (int ROW = 0; ROW < NUMBER_OF_LINES; ROW++) {
-		int y1 = (ROW + 1) * WIDTH_OF_SQUARE_IN_PIXELS;
+		int y1 = (ROW + 1) * BLOCK_WIDTH;
 		int x1 = 1;
 		int y2 = y1;
 		int x2 = 499;
@@ -124,24 +122,23 @@ void CMFCApplication1View::DrawQuadtrilateral(CDC* pDC, int x1, int y1, int x2, 
 }
 
 void CMFCApplication1View::DrawRegularPolygon(CDC* pDC, int cx, int cy, int r, int n, float rotAngle = 0.0) {
-	float DEFAULT_ANGLE = 2*M_PI / n;
+	float DEFAULT_ANGLE = 2 * M_PI / n;
 	float CURRENT_ANGLE = DEFAULT_ANGLE + rotAngle;
 
-	LOGBRUSH logBrush;
-	logBrush.lbStyle = BS_SOLID;
-	logBrush.lbColor = 0x00FF00FF;
-
-	CPen borderPen(PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND, 3, &logBrush);
+	CPen borderPen(PS_GEOMETRIC | PS_SOLID | PS_ENDCAP_ROUND | PS_JOIN_ROUND, 3, 0x00FF00FF);
 	CPen* oldPen = pDC->SelectObject(&borderPen);
 
 	CPoint* POINTS_LIST = new CPoint[n + 1];
 
-	for (int i = 0; i < n + 1; i++) {
-		double cosinus = cos(CURRENT_ANGLE);
-		double sinus = sin(CURRENT_ANGLE);
-		CPoint tmpPoint(cx + r * cosinus, cy + r * sinus);
-		POINTS_LIST[i] = tmpPoint;
-		CURRENT_ANGLE += DEFAULT_ANGLE;
+	for(
+		int CURRENT_POINT = 0; 
+		CURRENT_POINT < n + 1;
+		CURRENT_POINT++, CURRENT_ANGLE+=DEFAULT_ANGLE
+	){
+		double COSINUS = cos(CURRENT_ANGLE);
+		double SINUS = sin(CURRENT_ANGLE);
+		CPoint tmpPoint(cx + r * COSINUS, cy + r * SINUS);
+		POINTS_LIST[CURRENT_POINT] = tmpPoint;
 	}
 
 	pDC->Polyline(POINTS_LIST, n + 1);
@@ -181,15 +178,22 @@ void CMFCApplication1View::OnDraw(CDC* pDC)
 	**/
 	CBrush* newBrush = new CBrush(PURPLE_SQUARE_COLOR);
 	CBrush* oldBrush = pDC->SelectObject(newBrush);
-	pDC->Rectangle(3.25 * 25, 25, 7.9 * 25, 5.375 * 25);
+	pDC->Rectangle(3.25 * BLOCK_WIDTH, BLOCK_WIDTH, 7.9 * BLOCK_WIDTH, 5.375 * BLOCK_WIDTH);
 
 	/**
-	*  SRAFIRANI BELI
+	*  SRAFIRANI BELI TROUGAO
 	**/
 	delete newBrush;
 	newBrush = new CBrush(HS_DIAGCROSS, RGB(102, 153, 255));
 	pDC->SelectObject(newBrush);
-	DrawTriangle(pDC, 7.9 * 25, 25,7.9 * 25, 10 * 25, 16.9 * 25, 10 * 25);
+	DrawTriangle(
+		pDC,
+		7.9 * BLOCK_WIDTH, 
+		BLOCK_WIDTH,
+		7.9 * BLOCK_WIDTH, 10 * BLOCK_WIDTH,
+		16.9 * BLOCK_WIDTH,
+		10 * BLOCK_WIDTH
+	);
 
 	/**
 	*  YELLOW TRIANGLE
@@ -197,7 +201,14 @@ void CMFCApplication1View::OnDraw(CDC* pDC)
 	delete newBrush;
 	newBrush = new CBrush(YELLOW_TRIANGLE_COLOR);
 	pDC->SelectObject(newBrush);
-	DrawTriangle(pDC, 3.25 * 25, 5.375 * 25, 7.9 * 25, 5.375 * 25, 3.25 * 25, 10 * 25);
+	DrawTriangle(pDC,
+		3.25 * BLOCK_WIDTH,
+		5.375 * BLOCK_WIDTH,
+		7.9 * BLOCK_WIDTH,
+		5.375 * BLOCK_WIDTH,
+		3.25 * BLOCK_WIDTH,
+		10 * BLOCK_WIDTH
+	);
 
 	/**
 	*  ORANGE TRIANGLE
@@ -205,7 +216,14 @@ void CMFCApplication1View::OnDraw(CDC* pDC)
 	delete newBrush;
 	newBrush = new CBrush(ORANGE_TRIANGLE_COLOR);
 	pDC->SelectObject(newBrush);
-	DrawTriangle(pDC, 7.9 * 25, 5.375 * 25, 3.25 * 25, 10 * 25, 7.9 * 25, 14.675 * 25);
+	DrawTriangle(pDC,
+		7.9 * BLOCK_WIDTH,
+		5.375 * BLOCK_WIDTH,
+		3.25 * BLOCK_WIDTH,
+		10 * BLOCK_WIDTH,
+		7.9 * BLOCK_WIDTH,
+		14.675 * BLOCK_WIDTH
+	);
 
 	/**
 	*  RED TRIANGLE
@@ -213,7 +231,14 @@ void CMFCApplication1View::OnDraw(CDC* pDC)
 	delete newBrush;
 	newBrush = new CBrush(RED_TRIANGLE_COLOR);
 	pDC->SelectObject(newBrush);
-	DrawTriangle(pDC, 7.9 * 25, 10 * 25, 7.9 * 25, 14.675 * 25, 13 * 25, 14.675 * 25);
+	DrawTriangle(pDC,
+		7.9 * BLOCK_WIDTH,
+		10 * BLOCK_WIDTH,
+		7.9 * BLOCK_WIDTH,
+		14.675 * BLOCK_WIDTH,
+		13 * BLOCK_WIDTH,
+		14.675 * BLOCK_WIDTH
+	);
 
 
 	/**
@@ -222,7 +247,14 @@ void CMFCApplication1View::OnDraw(CDC* pDC)
 	delete newBrush;
 	newBrush = new CBrush(GREEN_TRIANGLE_COLOR);
 	pDC->SelectObject(newBrush);
-	DrawTriangle(pDC,7.9 * 25, 10 * 25, 16.9 * 25, 10 * 25, 16.9 * 25, 19 * 25 );
+	DrawTriangle(pDC,
+		7.9 * BLOCK_WIDTH,
+		10 * BLOCK_WIDTH,
+		16.9 * BLOCK_WIDTH,
+		10 * BLOCK_WIDTH,
+		16.9 * BLOCK_WIDTH,
+		19 * BLOCK_WIDTH
+	);
 
 	/**
 	*  PINK DELT
@@ -230,21 +262,30 @@ void CMFCApplication1View::OnDraw(CDC* pDC)
 	delete newBrush;
 	newBrush = new CBrush(DELT_PINK_COLOR);
 	pDC->SelectObject(newBrush);
-	DrawQuadtrilateral(pDC, 7.9 * 25, 14.675 * 25, 12.5 * 25, 14.675 * 25, 16.9 * 25, 19 * 25,  12.25 * 25 ,19*25);
+	DrawQuadtrilateral(pDC,
+		7.9 * BLOCK_WIDTH,
+		14.675 * BLOCK_WIDTH,
+		12.5 * BLOCK_WIDTH,
+		14.675 * BLOCK_WIDTH,
+		16.9 * BLOCK_WIDTH,
+		19 * BLOCK_WIDTH,
+		12.25 * BLOCK_WIDTH,
+		19 * BLOCK_WIDTH
+	);
 	
 
 	pDC->SelectObject(oldBrush);
 	pDC->SelectObject(oldPen);
 
-	DrawRegularPolygon(pDC,10.5 * 25 , 7.5 * 25 , 1.5  *25,4);
-	DrawRegularPolygon(pDC, 4.5 * 25, 6.75 * 25, 0.75 * 25, 8);
-	DrawRegularPolygon(pDC, 6 * 25, 10 * 25, 25, 6);
-	DrawRegularPolygon(pDC, 14.25 * 25, 12.5 * 25, 1.5 * 25, 5);
-	DrawRegularPolygon(pDC, 9.25*25 , 13.25 * 25, 0.75 * 25, 7);
+	DrawRegularPolygon(pDC,10.5 * BLOCK_WIDTH, 7.5 * BLOCK_WIDTH, 1.5  * BLOCK_WIDTH,4);
+	DrawRegularPolygon(pDC, 4.5 * BLOCK_WIDTH, 6.75 * BLOCK_WIDTH, 0.75 * BLOCK_WIDTH, 8);
+	DrawRegularPolygon(pDC, 6 * BLOCK_WIDTH, 10 * BLOCK_WIDTH, BLOCK_WIDTH, 6);
+	DrawRegularPolygon(pDC, 14.25 * BLOCK_WIDTH, 12.5 * BLOCK_WIDTH, 1.5 * BLOCK_WIDTH, 5);
+	DrawRegularPolygon(pDC, 9.25 * BLOCK_WIDTH, 13.25 * BLOCK_WIDTH, 0.75 * BLOCK_WIDTH, 7);
 
 
 
-	if (ShowGrid) DrawGrid(pDC);
+	if (showGrid) DrawGrid(pDC);
 }
 
 
@@ -295,7 +336,7 @@ void CMFCApplication1View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar != VK_SPACE) return;
 
-	ShowGrid = !ShowGrid;
+	showGrid = !showGrid;
 	Invalidate();
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);

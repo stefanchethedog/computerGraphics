@@ -14,7 +14,8 @@ protected: // create from serialization only
 // Attributes
 public:
 	CMFCApplication1Doc* GetDocument() const;
-	bool ShowGrid = false;
+	BOOL showGrid = false;
+	LONG BLOCK_WIDTH = 25;
 // Operations
 public:
 
